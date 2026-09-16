@@ -8,6 +8,12 @@
 .settlement-item-log .settlement-people span { white-space: nowrap; }
 .transaction-toggle { display: block; width: 100%; padding: 10px 0 2px; border: 0; background: transparent; color: #d1edda; font-size: 18px; line-height: 1; cursor: pointer; }
 .transaction-toggle:hover { color: white; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.import-modal { width: min(100%, 620px); }
+.import-help { margin: 8px 0 0; color: var(--muted); font-size: 10px; }
+.import-preview { max-height: 240px; margin-top: 18px; overflow: auto; padding: 12px; border: 1px solid var(--line); border-radius: 6px; background: #fbfcfa; }
+.import-counts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; color: var(--muted); font-size: 10px; text-align: center; }.import-counts span { padding: 8px 4px; border-radius: 4px; background: #eef3ed; }.import-counts strong { display: block; color: var(--ink); font-size: 16px; }
+.import-details { margin: 12px 0 0; padding: 0; list-style: none; }.import-details li { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-top: 1px solid var(--line); color: var(--ink); font-size: 10px; }.import-details li span { color: var(--muted); text-align: right; }.import-more { margin: 10px 0 0; color: var(--muted); font-size: 10px; }
 
 :root {
   --ink: #18211e;

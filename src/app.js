@@ -1,8 +1,9 @@
 import { calculatePool, toCents } from './calculations.js';
+import { analyzeCsv, importContributions } from './imports.js';
 import { createEmptyPool, loadPool, savePool } from './storage.js';
 
 const currency = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 2 });
-const state = { pool: loadPool(), editingId: null, transactionsExpanded: false };
+const state = { pool: loadPool(), editingId: null, transactionsExpanded: false, importPreview: null };
 const palette = ['avatar-sage', 'avatar-coral', 'avatar-blue', 'avatar-yellow', 'avatar-lilac', 'avatar-mint'];
 
 const elements = {
@@ -22,6 +23,11 @@ const elements = {
 	poolTitleInput: document.querySelector('#pool-title'),
 	poolTargetInput: document.querySelector('#pool-target'),
 	poolFormError: document.querySelector('#pool-form-error'),
+	importModal: document.querySelector('#import-modal'),
+	importFile: document.querySelector('#import-file'),
+	importFormError: document.querySelector('#import-form-error'),
+	importPreview: document.querySelector('#import-preview'),
+	importConfirm: document.querySelector('#import-confirm'),
 	toast: document.querySelector('#toast'),
 	note: document.querySelector('#pool-note')
 };
@@ -165,6 +171,62 @@ function closePoolModal() {
 	elements.poolModal.hidden = true;
 }
 
+function openImportModal() {
+	state.importPreview = null;
+	elements.importFile.value = '';
+	elements.importFormError.textContent = '';
+	elements.importPreview.hidden = true;
+	elements.importPreview.innerHTML = '';
+	elements.importConfirm.disabled = true;
+	elements.importModal.hidden = false;
+}
+
+function closeImportModal() {
+	elements.importModal.hidden = true;
+	state.importPreview = null;
+}
+
+function renderImportPreview(report) {
+	const detailRows = report.rows.slice(0, 20).map((row) => {
+		const label = row.status === 'imported' ? 'Imported' : row.status === 'merged' ? `Merged into ${row.to}` : row.status === 'duplicate' ? 'De-duplicated' : `Rejected: ${row.reason}`;
+		const name = row.name || row.original || 'Empty row';
+		return `<li><strong>${escapeHtml(name)}</strong><span>${escapeHtml(label)}</span></li>`;
+	}).join('');
+	const remaining = report.rows.length > 20 ? `<p class="import-more">Showing the first 20 rows.</p>` : '';
+	elements.importPreview.innerHTML = `<div class="import-counts"><span><strong>${report.accepted.length}</strong> imported</span><span><strong>${report.duplicates.length}</strong> de-duplicated</span><span><strong>${report.merged.length}</strong> merged</span><span><strong>${report.rejected.length}</strong> rejected</span></div><ul class="import-details">${detailRows || '<li>No data rows found.</li>'}</ul>${remaining}`;
+	elements.importPreview.hidden = false;
+	elements.importConfirm.disabled = report.accepted.length === 0;
+}
+
+async function handleImportFile(event) {
+	const file = event.target.files[0];
+	state.importPreview = null;
+	elements.importConfirm.disabled = true;
+	if (!file) return;
+	if (!file.name.toLowerCase().endsWith('.csv')) {
+		elements.importFormError.textContent = 'Only CSV files accepted.';
+		return;
+	}
+	try {
+		const report = analyzeCsv(await file.text(), state.pool.participants, state.pool.transactions);
+		state.importPreview = report;
+		elements.importFormError.textContent = report.error || '';
+		renderImportPreview(report);
+	} catch {
+		elements.importFormError.textContent = 'This CSV file could not be read.';
+	}
+}
+
+function confirmImport() {
+	if (!state.importPreview?.accepted.length) return;
+	importContributions(state.pool, state.importPreview);
+	savePool(state.pool);
+	const importedCount = state.importPreview.accepted.length;
+	closeImportModal();
+	render();
+	showToast(`${importedCount} contribution${importedCount === 1 ? '' : 's'} imported.`);
+}
+
 function handlePoolSubmit(event) {
 	event.preventDefault();
 	const title = elements.poolTitleInput.value.trim();
@@ -193,10 +255,13 @@ document.addEventListener('click', (event) => {
 	if (!actionTarget) return;
 	const { action, id } = actionTarget.dataset;
 	if (action === 'add-person') openPersonModal();
+	if (action === 'import-csv') openImportModal();
 	if (action === 'edit-person') openPersonModal(id);
 	if (action === 'close-person-modal') closePersonModal();
 	if (action === 'new-pool') openPoolModal();
 	if (action === 'close-pool-modal') closePoolModal();
+	if (action === 'close-import-modal') closeImportModal();
+	if (action === 'confirm-import') confirmImport();
 	if (action === 'toggle-transactions') {
 		state.transactionsExpanded = !state.transactionsExpanded;
 		render();
@@ -208,4 +273,6 @@ elements.form.addEventListener('submit', handlePersonSubmit);
 elements.modal.addEventListener('click', (event) => { if (event.target === elements.modal) closePersonModal(); });
 elements.poolForm.addEventListener('submit', handlePoolSubmit);
 elements.poolModal.addEventListener('click', (event) => { if (event.target === elements.poolModal) closePoolModal(); });
+elements.importFile.addEventListener('change', handleImportFile);
+elements.importModal.addEventListener('click', (event) => { if (event.target === elements.importModal) closeImportModal(); });
 render();

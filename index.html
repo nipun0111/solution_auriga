@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#f5f7f2" />
   <meta name="description" content="A calm, clear way to track shared gift contributions and settle up fairly." />
-  <title>Gathered | Farewell Gift Pool</title>
+  <title>Gathered | Price Pool</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -30,10 +30,15 @@
           <h1>Shared gift <span class="title-accent">pool.</span></h1>
           <p class="hero-copy">A simple view of what is in, what is left, and how to settle the final pieces.</p>
         </div>
-        <button class="button button-secondary" type="button" data-action="new-pool">
+        <div class="hero-actions">
+          <button class="button button-secondary" type="button" data-action="import-csv">
+            Import CSV
+          </button>
+          <button class="button button-secondary" type="button" data-action="new-pool">
           <span class="plus-icon" aria-hidden="true">+</span>
           New pool
-        </button>
+          </button>
+        </div>
       </section>
 
       <section class="summary-grid" aria-label="Pool summary">
@@ -78,7 +83,7 @@
           <div class="settlement-topline"><span class="eyebrow eyebrow-light">Almost there</span><span class="sparkle" aria-hidden="true">✦</span></div>
           <h2 id="settlement-heading">Payment log</h2>
           <p class="settlement-description" id="settlement-description">Payments made to this pool will appear here.</p>
-          <div class="settlement-list" id="settlement-list"><div class="empty-state">No transfers yet.</div></div>
+          <div class="settlement-list" id="settlement-list"><div class="empty-state">No payments yet.</div></div>
           <p class="settlement-note">All pool payments will be shown here.</p>
         </aside>
       </div>
@@ -107,6 +112,17 @@
       <p class="form-error" id="pool-form-error" role="alert"></p>
       <div class="modal-actions"><button class="button button-secondary" type="button" data-action="close-pool-modal">Cancel</button><button class="button button-dark" type="submit">Create pool</button></div>
     </form>
+  </div>
+  <div class="modal-backdrop" id="import-modal" hidden>
+    <section class="person-modal import-modal" aria-labelledby="import-title">
+      <div class="modal-heading"><div><p class="eyebrow">Contribution history</p><h2 id="import-title">Import CSV</h2></div><button class="dismiss-button" type="button" data-action="close-import-modal" aria-label="Close">×</button></div>
+      <label class="field-label" for="import-file">CSV file</label>
+      <input class="field-input" id="import-file" type="file" accept=".csv,text/csv" />
+      <p class="import-help">Only CSV files accepted. Use columns: name, amount, date, reference.</p>
+      <p class="form-error" id="import-form-error" role="alert"></p>
+      <div id="import-preview" class="import-preview" hidden></div>
+      <div class="modal-actions"><button class="button button-secondary" type="button" data-action="close-import-modal">Cancel</button><button class="button button-dark" id="import-confirm" type="button" data-action="confirm-import" disabled>Import contributions</button></div>
+    </section>
   </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script type="module" src="src/app.js"></script>

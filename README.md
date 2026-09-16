@@ -24,3 +24,8 @@ Open `index.html` in a browser. Pool data is saved in the browser's local storag
 - `styles/input.css` is the Tailwind source stylesheet and custom component styling.
 - `dist/output.css` is the generated, minified stylesheet loaded by the page.
 - `src/` contains the pool calculations, settlement logic, persistence, and UI entrypoint.
+
+
+## CSV for testing
+
+Also added an sample csv file as "sample-contributions.csv" to test the import csv feature.
