@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f5f7f2" />
+  <meta name="description" content="A calm, clear way to track shared gift contributions and settle up fairly." />
+  <title>Gathered | Farewell Gift Pool</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="dist/output.css" />
+</head>
+<body class="min-h-screen bg-[#f5f7f2] text-[#18211e] antialiased">
+  <div class="page-shell">
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="Gathered home">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span>gathered</span>
+      </a>
+      <div class="header-actions">
+        <span class="saved-indicator"><span class="saved-dot"></span>Saved just now</span>
+      </div>
+    </header>
+
+    <main id="top" class="main-content">
+      <section class="hero-section">
+        <div>
+          <p class="eyebrow">Shared pool <span class="eyebrow-line"></span> September 2026</p>
+          <h1>Shared gift <span class="title-accent">pool.</span></h1>
+          <p class="hero-copy">A simple view of what is in, what is left, and how to settle the final pieces.</p>
+        </div>
+        <button class="button button-secondary" type="button" data-action="new-pool">
+          <span class="plus-icon" aria-hidden="true">+</span>
+          New pool
+        </button>
+      </section>
+
+      <section class="summary-grid" aria-label="Pool summary">
+        <article class="summary-card summary-card-primary">
+          <div class="card-label-row"><span class="card-label">Collected</span><span class="card-kicker" id="target-label">of ₹0</span></div>
+          <div class="summary-value" id="collected-amount">₹00</div>
+          <div class="progress-track" id="progress-track" aria-label="0 percent collected"><span id="progress-bar" style="width: 0%"></span></div>
+          <div class="card-footer"><span id="progress-label">0% of target</span><span class="status-positive" id="collection-status">No pool yet</span></div>
+        </article>
+        <article class="summary-card">
+          <div class="card-label-row"><span class="card-label">Still needed</span><span class="summary-icon icon-amber">↗</span></div>
+          <div class="summary-value" id="needed-amount">₹00</div>
+          <div class="card-footer card-footer-bottom"><span id="needed-people">From 0 people</span><span class="status-warm" id="needed-status">To collect</span></div>
+        </article>
+        <article class="summary-card">
+          <div class="card-label-row"><span class="card-label">Fair share</span><span class="summary-icon icon-teal">÷</span></div>
+          <div class="summary-value" id="share-amount">₹00</div>
+          <div class="card-footer card-footer-bottom"><span id="contributor-count">0 contributors</span><span class="status-neutral">Each</span></div>
+        </article>
+      </section>
+
+      <div class="content-grid">
+        <section class="panel people-panel" aria-labelledby="people-heading">
+          <div class="panel-heading">
+            <div>
+              <div class="heading-with-count"><h2 id="people-heading">Contributors</h2><span class="count-pill" id="people-count">0</span></div>
+              <p class="panel-description">Everyone's share, side by side.</p>
+            </div>
+            <button class="button button-dark" type="button" data-action="add-person"><span class="plus-icon" aria-hidden="true">+</span> Add person</button>
+          </div>
+
+          <div class="people-table" id="people-list" role="table" aria-label="Contributor balances">
+            <div class="table-head" role="row">
+              <span role="columnheader">Person</span><span role="columnheader">Fair share</span><span role="columnheader">Paid</span><span role="columnheader">Balance</span><span role="columnheader">Status</span><span></span>
+            </div>
+            <div class="empty-state">Create a pool to add contributors.</div>
+          </div>
+          <div class="people-footer"><span><span class="footer-check">✓</span> All contributions are private to this pool</span></div>
+        </section>
+
+        <aside class="settlement-panel" aria-labelledby="settlement-heading">
+          <div class="settlement-topline"><span class="eyebrow eyebrow-light">Almost there</span><span class="sparkle" aria-hidden="true">✦</span></div>
+          <h2 id="settlement-heading">Payment log</h2>
+          <p class="settlement-description" id="settlement-description">Payments made to this pool will appear here.</p>
+          <div class="settlement-list" id="settlement-list"><div class="empty-state">No transfers yet.</div></div>
+          <p class="settlement-note">All pool payments will be shown here.</p>
+        </aside>
+      </div>
+
+    </main>
+    <footer class="site-footer"><span>gathered / shared costs, made clear</span><span>Private workspace <span class="footer-lock">⌑</span></span></footer>
+  </div>
+  <div class="modal-backdrop" id="person-modal" hidden>
+    <form class="person-modal" id="person-form">
+      <div class="modal-heading"><div><p class="eyebrow">Pool member</p><h2 id="person-modal-title">Add person</h2></div><button class="dismiss-button" type="button" data-action="close-person-modal" aria-label="Close">×</button></div>
+      <label class="field-label" for="person-name">Name</label>
+      <input class="field-input" id="person-name" name="name" required maxlength="60" autocomplete="off" placeholder="e.g. Priya Singh" />
+      <label class="field-label" id="person-paid-label" for="person-paid">Already paid</label>
+      <div class="currency-input"><span>₹</span><input class="field-input" id="person-paid" name="paid" type="number" min="0" step="0.01" required value="0" /></div>
+      <p class="form-error" id="person-form-error" role="alert"></p>
+      <div class="modal-actions"><button class="button button-secondary" type="button" data-action="close-person-modal">Cancel</button><button class="button button-dark" type="submit">Save person</button></div>
+    </form>
+  </div>
+  <div class="modal-backdrop" id="pool-modal" hidden>
+    <form class="person-modal" id="pool-form">
+      <div class="modal-heading"><div><p class="eyebrow">Start fresh</p><h2>New pool</h2></div><button class="dismiss-button" type="button" data-action="close-pool-modal" aria-label="Close">×</button></div>
+      <label class="field-label" for="pool-title">Pool name</label>
+      <input class="field-input" id="pool-title" name="title" required maxlength="80" autocomplete="off" value="Shared gift pool" placeholder="e.g. Farewell gift for Maya" />
+      <label class="field-label" for="pool-target">Target amount</label>
+      <div class="currency-input"><span>₹</span><input class="field-input" id="pool-target" name="target" type="number" min="0.01" step="0.01" required value="6000" /></div>
+      <p class="form-error" id="pool-form-error" role="alert"></p>
+      <div class="modal-actions"><button class="button button-secondary" type="button" data-action="close-pool-modal">Cancel</button><button class="button button-dark" type="submit">Create pool</button></div>
+    </form>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>
